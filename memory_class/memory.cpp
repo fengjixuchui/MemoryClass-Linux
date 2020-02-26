@@ -57,3 +57,11 @@ void Mem::WriteBuffer(int pid, off_t address, void* value, size_t size)
     ptrace(PTRACE_DETACH, pid, 0, 0);
     close(fd);
 }
+
+bool Mem::IsProcessRunning(int pid)
+{
+    char dirbuf[MAX_FILENAME];
+    sprintf(dirbuf, "/proc/%ld", (long)pid);
+    DIR* dir = opendir(dirbuf);
+    return dir != NULL;
+}

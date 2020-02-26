@@ -22,4 +22,5 @@ namespace Mem
     int GetProcessID(std::string processName);
     void ReadBuffer(int pid, off_t address, void* buffer, size_t size);
     void WriteBuffer(int pid, off_t address, void* value, size_t size);
+    bool IsProcessRunning(int pid);
 }
