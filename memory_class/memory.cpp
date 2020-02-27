@@ -66,3 +66,17 @@ bool Mem::IsProcessRunning(int pid)
     stat(dirbuf, &status);
     return status.st_mode & S_IFDIR != 0;
 }
+
+unsigned int Mem::FileToArrayOfBytes(std::string filepath, char** pbuffer)
+{
+    std::ifstream filestream(filepath, std::ios::binary | std::ios::ate);
+    if(filestream.fail()) return BAD_RETURN;
+    
+	unsigned int size = filestream.tellg();
+    char* aob_buffer = new char(size);
+	filestream.seekg(0, std::ios::beg);
+	filestream.read((char*)aob_buffer, size);
+	filestream.close();
+    *pbuffer = aob_buffer;
+    return size;
+}

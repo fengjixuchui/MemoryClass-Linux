@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #define INVALID_PID -1
 #define INVALID_MEMFILE -1
+#define BAD_RETURN -1
 #define MAX_FILENAME 256
 
 namespace Mem
@@ -23,4 +24,5 @@ namespace Mem
     void ReadBuffer(int pid, off_t address, void* buffer, size_t size);
     void WriteBuffer(int pid, off_t address, void* value, size_t size);
     bool IsProcessRunning(int pid);
+    unsigned int FileToArrayOfBytes(std::string filepath, char** pbuffer);
 }
