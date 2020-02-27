@@ -62,6 +62,7 @@ bool Mem::IsProcessRunning(int pid)
 {
     char dirbuf[MAX_FILENAME];
     sprintf(dirbuf, "/proc/%ld", (long)pid);
-    DIR* dir = opendir(dirbuf);
-    return dir != NULL;
+    struct stat status;
+    stat(dirbuf, &status);
+    return status.st_mode & S_IFDIR != 0;
 }
