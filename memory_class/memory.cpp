@@ -73,10 +73,9 @@ unsigned int Mem::FileToArrayOfBytes(std::string filepath, char** pbuffer)
     if(filestream.fail()) return BAD_RETURN;
     
 	unsigned int size = filestream.tellg();
-    char* aob_buffer = new char(size);
+    *pbuffer = new char(size);
 	filestream.seekg(0, std::ios::beg);
-	filestream.read((char*)aob_buffer, size);
+	filestream.read((char*)*pbuffer, size);
 	filestream.close();
-    *pbuffer = aob_buffer;
     return size;
 }
