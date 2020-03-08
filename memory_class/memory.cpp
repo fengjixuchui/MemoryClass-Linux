@@ -1,6 +1,23 @@
 #include "memory.h"
 
-int Mem::GetProcessID(std::string processName)
+//Mem
+
+unsigned int Mem::FileToArrayOfBytes(std::string filepath, char** pbuffer)
+{
+    std::ifstream filestream(filepath, std::ios::binary | std::ios::ate);
+    if(filestream.fail()) return BAD_RETURN;
+    
+	unsigned int size = filestream.tellg();
+    *pbuffer = new char(size);
+	filestream.seekg(0, std::ios::beg);
+	filestream.read((char*)*pbuffer, size);
+	filestream.close();
+    return size;
+}
+
+//Mem::Ex
+
+int Mem::Ex::GetProcessID(std::string processName)
 {
     int pid = INVALID_PID;
     DIR* pdir = opendir("/proc");
@@ -34,7 +51,7 @@ int Mem::GetProcessID(std::string processName)
     return pid;
 }
 
-void Mem::ReadBuffer(int pid, off_t address, void* buffer, size_t size)
+void Mem::Ex::ReadBuffer(int pid, off_t address, void* buffer, size_t size)
 {
     char file[MAX_FILENAME];
     sprintf(file, "/proc/%ld/mem", (long)pid);
@@ -46,7 +63,7 @@ void Mem::ReadBuffer(int pid, off_t address, void* buffer, size_t size)
     close(fd);
 }
 
-void Mem::WriteBuffer(int pid, off_t address, void* value, size_t size)
+void Mem::Ex::WriteBuffer(int pid, off_t address, void* value, size_t size)
 {
     char file[MAX_FILENAME];
     sprintf(file, "/proc/%ld/mem", (long)pid);
@@ -58,7 +75,7 @@ void Mem::WriteBuffer(int pid, off_t address, void* value, size_t size)
     close(fd);
 }
 
-bool Mem::IsProcessRunning(int pid)
+bool Mem::Ex::IsProcessRunning(int pid)
 {
     char dirbuf[MAX_FILENAME];
     sprintf(dirbuf, "/proc/%ld", (long)pid);
@@ -67,15 +84,23 @@ bool Mem::IsProcessRunning(int pid)
     return status.st_mode & S_IFDIR != 0;
 }
 
-unsigned int Mem::FileToArrayOfBytes(std::string filepath, char** pbuffer)
+//Mem::In
+
+int Mem::In::GetProcessID()
 {
-    std::ifstream filestream(filepath, std::ios::binary | std::ios::ate);
-    if(filestream.fail()) return BAD_RETURN;
-    
-	unsigned int size = filestream.tellg();
-    *pbuffer = new char(size);
-	filestream.seekg(0, std::ios::beg);
-	filestream.read((char*)*pbuffer, size);
-	filestream.close();
-    return size;
+    int pid = getpid();
+    if(pid <= 0) pid = INVALID_PID;
+    return pid;
+}
+
+bool Mem::In::ReadBuffer(off_t address, void* buffer, size_t size)
+{
+    memcpy((void*)buffer, (void*)address, size);
+    return true;
+}
+
+bool Mem::In::WriteBuffer(off_t address, void* value, size_t size)
+{
+    memcpy((void*)address, (void*)value, size);
+    return true;
 }
